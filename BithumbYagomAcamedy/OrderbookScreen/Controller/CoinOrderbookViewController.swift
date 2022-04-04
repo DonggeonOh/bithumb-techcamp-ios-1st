@@ -15,7 +15,7 @@ final class CoinOrderbookViewController: UIViewController, PageViewControllerabl
     
     // MARK: - Section
     
-    enum Section: CaseIterable {
+    enum Section: Int, CaseIterable {
         case ask
         case bid
         
@@ -36,6 +36,7 @@ final class CoinOrderbookViewController: UIViewController, PageViewControllerabl
     @IBOutlet private weak var totalBidsQuantityLabel: UILabel!
     @IBOutlet private weak var askMinimumPriceView: MaximumMinimumOrderPriceView!
     @IBOutlet private weak var bidMaximumPriceView: MaximumMinimumOrderPriceView!
+    
     // MARK: - Property
     
     var completion: (() -> Void)?
@@ -97,9 +98,17 @@ extension CoinOrderbookViewController {
     }
     
     private func scrollToCollectionViewCenter() {
-        let centerY = coinOrderbookCollectionView.contentSize.height / 2 - coinOrderbookCollectionView.frame.height / 2
+        let bidFirstItemIndexPath = IndexPath(item: .zero, section: Section.bid.rawValue)
         
+        guard let bidFirstItem = coinOrderbookCollectionView.collectionViewLayout.layoutAttributesForItem(
+            at: bidFirstItemIndexPath
+        ) else {
+            return
+        }
+        
+        let centerY = bidFirstItem.frame.origin.y - coinOrderbookCollectionView.frame.height / 2
         coinOrderbookCollectionView.setContentOffset(CGPoint(x: 0, y: centerY), animated: false)
+        
         toggleMaximumMinimumPriceHidden(true)
     }
     
